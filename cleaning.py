@@ -4,6 +4,14 @@ import matplotlib.pyplot as plt
 
 
 def clean_raw():
+
+  """
+  Assumption: data saved in "credit_card_data.csv"
+  :return: cleaned dataset to be passed to further data transformation.
+
+  # we drop small numbers of data points, calculate payment as % of prev month,
+  and group small sample size groups together
+  """
   df = pd.read_csv('credit_card_data.csv', skiprows = 1)
   df.set_index('ID', inplace=True)
 
