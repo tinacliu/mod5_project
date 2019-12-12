@@ -39,6 +39,11 @@ def log_reg(X_train_scale, X_test_scale, y_train, y_test,
   recall = recall_score(y_test, preds)
   print('Recall is :{0}'.format(round(recall,4)))
 
+  prec = precision_score(y_test, preds)
+  print('Precision is :{0}'.format(round(prec,4)))
+
+  F1 = f1_score(y_test, preds)
+  print('F1 score is :{0}'.format(round(F1,4)))
 
   # Check the AUC for predictions
   false_positive_rate, true_positive_rate, thresholds = roc_curve(y_test,probas[:,1])
