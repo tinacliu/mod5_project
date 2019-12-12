@@ -22,7 +22,7 @@ def log_reg(X_train_scale, X_test_scale, y_train, y_test,
 
   Also prints the AUC of the model using test dataset, and plots ROC curve.
   """
-  logreg = LogisticRegression(C=c, penalty = penalty, solver='liblinear')
+  logreg = LogisticRegression(C=c, penalty = penalty, solver='liblinear', class_weight='balanced')
 
   model_log = logreg.fit(X_train_scale, y_train)
 
@@ -36,6 +36,9 @@ def log_reg(X_train_scale, X_test_scale, y_train, y_test,
   acc = accuracy_score(y_test, preds)
   print('Accuracy is :{0}'.format(round(acc,4)))
 
+  recall = recall_score(y_test, preds)
+  print('Recall is :{0}'.format(round(recall,4)))
+
 
   # Check the AUC for predictions
   false_positive_rate, true_positive_rate, thresholds = roc_curve(y_test,probas[:,1])
@@ -47,8 +50,12 @@ def log_reg(X_train_scale, X_test_scale, y_train, y_test,
 
   plt.scatter(false_positive_rate, true_positive_rate,
     marker='.', alpha=0.4, c='orange');
+  plt.title("ROC curve for model")
+  plt.xlabel("FPR")
+  plt.ylabel("TPR")
+  plt.show()
 
-  return acc, roc_auc, false_positive_rate, true_positive_rate, conf_matrix, log_reg
+  return acc, recall, roc_auc, false_positive_rate, true_positive_rate, conf_matrix, logreg
 
 
 
@@ -66,13 +73,22 @@ def grid_search(X_train, y_train, score = 'roc_auc', cv=3):
       'C' : np.logspace(-4, 4, 20)}
   ]
 
-  gs_clf = GridSearchCV(clf, param_grid = param_grid, scoring = score, cv=cv);
+  gs_clf = GridSearchCV(clf, param_grid = param_grid, scoring = score, cv=cv, return_train_score=True);
   best_clf = gs_clf.fit(X_train, y_train)
+
+  bmodels = pd.DataFrame(best_clf.cv_results_).sort_values('rank_test_score')
+
+  for i in range(0,3):
+    bmodels[f'split{i}_drop'] = bmodels[f'split{i}_train_score']-bmodels[f'split{i}_test_score']
+
+  bmodels['avg_drop'] = (bmodels['split0_drop']+bmodels['split1_drop']+bmodels['split2_drop'])/3
+  bmodels['overfit'] = bmodels['avg_drop'].apply(lambda x: 1 if x>0.03 else 0)
+
 
   best_c = best_clf.best_params_['C']
   best_pen = best_clf.best_params_['penalty']
 
-  return best_c, best_pen, best_clf.cv_results_
+  return best_c, best_pen, bmodels
 
 
 
