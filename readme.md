@@ -10,6 +10,12 @@ Presentation aim:
 to predict if a customer is going to default next month and highlight main drivers of likelihood to default
 to provide insights to lenders on what type of customers are more likely to default
 
+Final Files:
+cleaning.py -> contains the cleaning data code
+models.py -> contains functions for logistic regression model
+EDA_graphs.ipynb -> EDA analysis
+model_logistic_reg.ipynb -> log regression model
+mo_notebook.ipynb -> knn, decision tree and random forest model
 
 Questions forming EDA:
 are older customers better customers?
