@@ -8,6 +8,7 @@ sns.set_style('whitegrid')
 from sklearn.model_selection import train_test_split
 from sklearn.linear_model import LogisticRegression
 from sklearn.metrics import accuracy_score, recall_score,precision_score,f1_score, roc_curve, auc
+from sklearn.metrics import classification_report
 from sklearn.preprocessing import MinMaxScaler
 from sklearn.model_selection import GridSearchCV
 
@@ -44,6 +45,10 @@ def log_reg(X_train_scale, X_test_scale, y_train, y_test,
 
   F1 = f1_score(y_test, preds)
   print('F1 score is :{0}'.format(round(F1,4)))
+
+  report = classification_report(y_test, preds)
+  print('-----------------------------------')
+  print(report)
 
   # Check the AUC for predictions
   false_positive_rate, true_positive_rate, thresholds = roc_curve(y_test,probas[:,1])
